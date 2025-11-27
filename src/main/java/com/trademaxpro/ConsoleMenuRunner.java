@@ -133,7 +133,9 @@ public class ConsoleMenuRunner implements CommandLineRunner {
                 else if (x == 8) {
                     log.info(ASK_USER_ID);
                     String id = sc.next();
-                    log.info("\n==========  USER PORTFOLIO REPORT  ==========\n{}", portfolioService.prettyPortfolio(id));
+                    log.info("\n==========  USER PORTFOLIO REPORT  =========\n{}", 
+                            portfolioService.prettyPortfolio(id));
+
                 }
 
                 else if (x == 9) {
