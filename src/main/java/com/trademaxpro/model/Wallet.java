@@ -1,23 +1,23 @@
-// Wallet.java
 package com.trademaxpro.model;
 
-import lombok.Data;
-import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
+import lombok.Data;
 
-// simple wallet for money
 @Data
-@NoArgsConstructor
 @AllArgsConstructor
 public class Wallet {
 
-    private double balance = 0.0;   // default balance
+    private double balance;
 
     public void add(double amount) {
-        balance = balance + amount; // add money
+        if (amount <= 0)
+            throw new RuntimeException("Amount must be positive");
+        this.balance += amount;
     }
 
     public void deduct(double amount) {
-        balance = balance - amount; // remove money
+        if (amount > balance)
+            throw new RuntimeException("Insufficient balance");
+        this.balance -= amount;
     }
 }

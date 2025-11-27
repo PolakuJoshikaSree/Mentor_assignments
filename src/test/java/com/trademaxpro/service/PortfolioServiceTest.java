@@ -29,7 +29,7 @@ class PortfolioServiceTest {
         user = new User();
         user.setId("u1");
         user.setPortfolio(new ArrayList<>());
-        user.setWallet(new Wallet());
+        user.setWallet(new Wallet(0));
     }
 
     @Test

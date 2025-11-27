@@ -8,20 +8,32 @@ class WalletTest {
     @Test
     void testAddBalance() {
         Wallet wallet = new Wallet(1000);
-        wallet.setBalance(500);
-        assertEquals(1500, wallet.getBalance());
+
+        wallet.add(500);   // should become 1500
+
+        assertEquals(1500.0, wallet.getBalance());
     }
 
     @Test
     void testDeductBalance() {
         Wallet wallet = new Wallet(1000);
-        wallet.setBalance(300);
-        assertEquals(700, wallet.getBalance());
+
+        wallet.deduct(300); // should become 700
+
+        assertEquals(700.0, wallet.getBalance());
     }
 
     @Test
     void testDeductThrowsException() {
         Wallet wallet = new Wallet(200);
-        assertThrows(RuntimeException.class, () -> wallet.setBalance(500));
+
+        assertThrows(RuntimeException.class, () -> wallet.deduct(500));
+    }
+
+    @Test
+    void testAddNegativeAmount() {
+        Wallet wallet = new Wallet(500);
+
+        assertThrows(RuntimeException.class, () -> wallet.add(-200));
     }
 }

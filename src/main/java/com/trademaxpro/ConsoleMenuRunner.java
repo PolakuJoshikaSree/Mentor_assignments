@@ -8,10 +8,12 @@ import org.slf4j.LoggerFactory;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
+
 import java.util.ArrayList;
 import java.util.Scanner;
-@Profile("!test")  
+
 @Component
+@Profile("!test")  
 public class ConsoleMenuRunner implements CommandLineRunner {
 
     private static final Logger log = LoggerFactory.getLogger(ConsoleMenuRunner.class);
@@ -33,6 +35,7 @@ public class ConsoleMenuRunner implements CommandLineRunner {
 
     @Override
     public void run(String... args) {
+
         Scanner sc = new Scanner(System.in);
 
         while (true) {
@@ -52,96 +55,85 @@ public class ConsoleMenuRunner implements CommandLineRunner {
             int x = sc.nextInt();
 
             try {
-                if (x == 1) {
-                    log.info(ASK_USER_ID);
-                    String id = sc.next();
 
-                    log.info("Enter Name:");
-                    String name = sc.next();
+                switch (x) {
 
-                    log.info("Enter Email:");
-                    String email = sc.next();
+                    case 1 -> {
+                        log.info(ASK_USER_ID);
+                        String id = sc.next();
+                        log.info("Enter Name:");
+                        String name = sc.next();
+                        log.info("Enter Email:");
+                        String email = sc.next();
+                        log.info("Enter PAN:");
+                        String pan = sc.next();
 
-                    log.info("Enter PAN:");
-                    String pan = sc.next();
+                        // FIXED: Default wallet = 0 not menu number
+                        User registerUser = new User(id, name, email, pan, new Wallet(0), new ArrayList<>());
+                        userService.registerUser(registerUser);
+                        log.info("User registered successfully!");
+                    }
 
-                    User registerUser = userService.registerUser(new User(id, name, email, pan, new Wallet(), new ArrayList<>()));
+                    case 2 -> {
+                        log.info(ASK_USER_ID);
+                        String id = sc.next();
+                        log.info("Enter Amount:");
+                        double amount = sc.nextDouble();
+                        log.info("Balance = {}", walletService.addMoney(id, amount));
+                    }
 
-                    log.info("User registered successfully!");
-                }
+                    case 3 -> {
+                        log.info(ASK_USER_ID);
+                        String id = sc.next();
+                        log.info("Enter Amount:");
+                        double amount = sc.nextDouble();
+                        log.info("Balance = {}", walletService.withdrawMoney(id, amount));
+                    }
 
-                else if (x == 2) {
-                    log.info(ASK_USER_ID);
-                    String id = sc.next();
+                    case 4 -> {
+                        log.info(ASK_USER_ID);
+                        String id = sc.next();
+                        log.info("Wallet Balance = {}", walletService.viewBalance(id));
+                    }
 
-                    log.info("Enter Amount:");
-                    double amount = sc.nextDouble();
+                    case 5 -> stockService.getAllStocks()
+                                         .forEach(s -> log.info("{} @ {}", s.getTicker(), s.getPrice()));
 
-                    log.info("Balance = {}", walletService.addMoney(id, amount));
-                }
+                    case 6 -> {
+                        log.info(ASK_USER_ID);
+                        String id = sc.next();
+                        log.info("Enter Stock Ticker:");
+                        String ticker = sc.next();
+                        log.info("Enter Quantity:");
+                        int qty = sc.nextInt();
+                        portfolioService.buyStock(id, ticker, qty);
+                        log.info("Stock purchased successfully!");
+                    }
 
-                else if (x == 3) {
-                    log.info(ASK_USER_ID);
-                    String id = sc.next();
+                    case 7 -> {
+                        log.info(ASK_USER_ID);
+                        String id = sc.next();
+                        log.info("Enter Stock Ticker:");
+                        String ticker = sc.next();
+                        log.info("Enter Quantity:");
+                        int qty = sc.nextInt();
+                        portfolioService.sellStock(id, ticker, qty);
+                        log.info("Stock sold successfully!");
+                    }
 
-                    log.info("Enter Amount:");
-                    double amount = sc.nextDouble();
+                    case 8 -> {
+                        log.info(ASK_USER_ID);
+                        String id = sc.next();
+                        log.info("\n========== USER PORTFOLIO =========\n{}",
+                                portfolioService.prettyPortfolio(id));
+                    }
 
-                    log.info("Balance = {}", walletService.withdrawMoney(id, amount));
-                }
+                    case 9 -> {
+                        log.info("Exiting... Goodbye!");
+                        return;
+                    }
 
-                else if (x == 4) {
-                    log.info(ASK_USER_ID);
-                    String id = sc.next();
-
-                    log.info("Wallet Balance = {}", walletService.viewBalance(id));
-                }
-
-                else if (x == 5) {
-                    stockService.getAllStocks().forEach(s ->
-                            log.info("{} @ {}", s.getTicker(), s.getPrice())
-                    );
-                }
-
-                else if (x == 6) {
-                    log.info(ASK_USER_ID);
-                    String id = sc.next();
-
-                    log.info("Enter Stock Ticker:");
-                    String ticker = sc.next();
-
-                    log.info("Enter Quantity:");
-                    int qty = sc.nextInt();
-
-                    portfolioService.buyStock(id, ticker, qty);
-                    log.info("Stock purchased successfully!");
-                }
-
-                else if (x == 7) {
-                    log.info(ASK_USER_ID);
-                    String id = sc.next();
-
-                    log.info("Enter Stock Ticker:");
-                    String ticker = sc.next();
-
-                    log.info("Enter Quantity:");
-                    int qty = sc.nextInt();
-
-                    portfolioService.sellStock(id, ticker, qty);
-                    log.info("Stock sold successfully!");
-                }
-
-                else if (x == 8) {
-                    log.info(ASK_USER_ID);
-                    String id = sc.next();
-                    log.info("\n==========  USER PORTFOLIO REPORT  =========\n{}", 
-                            portfolioService.prettyPortfolio(id));
-
-                }
-
-                else if (x == 9) {
-                    log.info("Exiting... Goodbye!");
-                    break;
+                    default -> log.warn("Invalid Option! Try again.");
                 }
 
             } catch (Exception e) {

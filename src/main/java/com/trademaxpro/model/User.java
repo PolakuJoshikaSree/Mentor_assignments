@@ -23,7 +23,7 @@ public class User {
     private String email;                   
     private String pan;                     
 
-    private Wallet wallet = new Wallet();    
+    private Wallet wallet = new Wallet(0);    
 
     private List<PortfolioItem> portfolio = new ArrayList<>();  // owned stocks
 }

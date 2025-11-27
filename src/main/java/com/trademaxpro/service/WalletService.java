@@ -15,22 +15,19 @@ public class WalletService {
 
     public double addMoney(String userId, double amount) {
         User user = userService.getUser(userId);
-        user.getWallet().add(amount);
-
-        userService.updateUser(user);  
+        user.getWallet().add(amount);  // works now
+        userService.updateUser(user);
         return user.getWallet().getBalance();
     }
 
     public double withdrawMoney(String userId, double amount) {
         User user = userService.getUser(userId);
 
-        if (user.getWallet().getBalance() < amount) {
-            throw new InsufficientFundsException("Not enough balance in wallet");
-        }
+        if (user.getWallet().getBalance() < amount)
+            throw new InsufficientFundsException("Not enough balance");
 
-        user.getWallet().deduct(amount);
-
-        userService.updateUser(user); 
+        user.getWallet().deduct(amount); // works now
+        userService.updateUser(user);
         return user.getWallet().getBalance();
     }
 
