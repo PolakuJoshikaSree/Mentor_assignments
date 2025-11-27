@@ -69,11 +69,6 @@
             <artifactId>mockito-core</artifactId>
             <scope>test</scope>
         </dependency>
-        <dependency>
-        	<groupId>com.flightapp</groupId>
-        	<artifactId>FlightBookingApplication1</artifactId>
-        	<version>1.0.0</version>
-        </dependency>
     </dependencies>
 
     <build>

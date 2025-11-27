@@ -65,7 +65,7 @@ public class ConsoleMenuRunner implements CommandLineRunner {
                     log.info("Enter PAN:");
                     String pan = sc.next();
 
-                    userService.registerUser(new User(id, name, email, pan, new Wallet(), new ArrayList<>()));
+                    User registerUser = userService.registerUser(new User(id, name, email, pan, new Wallet(), new ArrayList<>()));
 
                     log.info("User registered successfully!");
                 }

@@ -1,36 +1,69 @@
 package com.trademaxpro.controller;
 
 import com.trademaxpro.exception.*;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
 
 class GlobalExceptionHandlerTest {
 
-    GlobalExceptionHandler handler = new GlobalExceptionHandler();
+    private GlobalExceptionHandler handler;
 
-    @Test
-    void userNotFoundHandled() {
-        ResponseEntity<String> response = handler.handleUser(new UserNotFoundException("User missing"));
-        assertEquals(404, response.getStatusCode().value());
-        assertEquals("User missing", response.getBody());
+    @BeforeEach
+    void setup() {
+        handler = new GlobalExceptionHandler();
     }
 
     @Test
-    void tradeRelatedErrorsHandled() {
-        ResponseEntity<String> response =
-                handler.handleTrade(new InvalidQuantityException("Invalid qty"));
-        assertEquals(400, response.getStatusCode().value());
-        assertEquals("Invalid qty", response.getBody());
+    void testHandleInvalidQuantity() {
+        InvalidQuantityException ex = new InvalidQuantityException("Invalid qty");
+        
+        ResponseEntity<String> response = handler.handleInvalidQuantity(ex);
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+        assertThat(response.getBody()).isEqualTo("Invalid qty");
     }
 
     @Test
-    void fallbackExceptionHandled() {
-        ResponseEntity<String> response =
-                handler.handleOther(new Exception("X failed"));
+    void testHandleTrade_StockNotFound() {
+        StockNotFoundException ex = new StockNotFoundException("Stock missing");
 
-        assertEquals(500, response.getStatusCode().value());
-        assertTrue(response.getBody().contains("Something went wrong"));
+        ResponseEntity<String> response = handler.handleTrade(ex);
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+        assertThat(response.getBody()).isEqualTo("Stock missing");
+    }
+
+    @Test
+    void testHandleTrade_InsufficientFunds() {
+        InsufficientFundsException ex = new InsufficientFundsException("Low balance");
+
+        ResponseEntity<String> response = handler.handleTrade(ex);
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+        assertThat(response.getBody()).isEqualTo("Low balance");
+    }
+
+    @Test
+    void testHandleTrade_InsufficientHoldings() {
+        InsufficientHoldingsException ex = new InsufficientHoldingsException("No holdings");
+
+        ResponseEntity<String> response = handler.handleTrade(ex);
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+        assertThat(response.getBody()).isEqualTo("No holdings");
+    }
+
+    @Test
+    void testHandleOther() {
+        Exception ex = new Exception("System crash");
+
+        ResponseEntity<String> response = handler.handleOther(ex);
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR);
+        assertThat(response.getBody()).contains("System crash");
     }
 }
