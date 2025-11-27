@@ -112,7 +112,8 @@ public class PortfolioService {
         User user = userService.getUser(userId);
 
         List<PortfolioViewItem> items = new ArrayList<>();
-        double totalInvested = 0, totalCurrent = 0;
+        double totalInvested = 0;
+        double totalCurrent = 0;
 
         for (PortfolioItem item : user.getPortfolio()) {
 

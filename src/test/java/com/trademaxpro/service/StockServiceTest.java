@@ -10,7 +10,7 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
-public class StockServiceTest {
+class StockServiceTest {
 
     @Test
     void getAllStocks_returnsList() {
