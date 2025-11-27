@@ -3,14 +3,23 @@ package com.trademaxpro;
 import com.trademaxpro.model.User;
 import com.trademaxpro.model.Wallet;
 import com.trademaxpro.service.*;
-
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
+
 import java.util.ArrayList;
 import java.util.Scanner;
 
 @Component
 public class ConsoleMenuRunner implements CommandLineRunner {
+
+    private static final Logger log = LoggerFactory.getLogger(ConsoleMenuRunner.class);
+
+    private static final String ASK_ID = "Enter User ID: ";
+    private static final String ASK_AMOUNT = "Enter Amount: ";
+    private static final String ASK_TICKER = "Enter Stock Ticker: ";
+    private static final String ASK_QTY = "Enter Quantity: ";
 
     private final UserService userService;
     private final WalletService walletService;
@@ -32,16 +41,16 @@ public class ConsoleMenuRunner implements CommandLineRunner {
 
         while (true) {
 
-            System.out.println("\n==== TradeMax Pro ====");
-            System.out.println("1. Register User");
-            System.out.println("2. Add Money");
-            System.out.println("3. Withdraw Money");
-            System.out.println("4. View Balance");
-            System.out.println("5. View Stocks");
-            System.out.println("6. Buy Stock");
-            System.out.println("7. Sell Stock");
-            System.out.println("8. View Portfolio");
-            System.out.println("9. Exit");
+            log.info("\n==== TradeMax Pro ====");
+            log.info("1. Register User");
+            log.info("2. Add Money");
+            log.info("3. Withdraw Money");
+            log.info("4. View Balance");
+            log.info("5. View Stocks");
+            log.info("6. Buy Stock");
+            log.info("7. Sell Stock");
+            log.info("8. View Portfolio");
+            log.info("9. Exit");
             System.out.print("Choose: ");
 
             int x = sc.nextInt();
@@ -50,107 +59,93 @@ public class ConsoleMenuRunner implements CommandLineRunner {
 
                 /* ================= REGISTER USER ================= */
                 if (x == 1) {
-                    System.out.print("Enter User ID: ");
+                    System.out.print(ASK_ID);
                     String id = sc.next();
-
                     System.out.print("Enter Name: ");
                     String name = sc.next();
-
                     System.out.print("Enter Email: ");
                     String email = sc.next();
-
                     System.out.print("Enter PAN: ");
                     String pan = sc.next();
 
                     userService.registerUser(new User(id, name, email, pan, new Wallet(), new ArrayList<>()));
-                    System.out.println("User registered successfully!");
+                    log.info("User registered successfully!");
                 }
 
                 /* ================= ADD MONEY ================= */
                 else if (x == 2) {
-                    System.out.print("Enter User ID: ");
+                    System.out.print(ASK_ID);
                     String id = sc.next();
-
-                    System.out.print("Enter Amount: ");
-                    double amount = sc.nextDouble();
-
-                    System.out.println("Balance = " + walletService.addMoney(id, amount));
+                    System.out.print(ASK_AMOUNT);
+                    double amt = sc.nextDouble();
+                    log.info("Balance = {}", walletService.addMoney(id, amt));
                 }
 
                 /* ================= WITHDRAW MONEY ================= */
                 else if (x == 3) {
-                    System.out.print("Enter User ID: ");
+                    System.out.print(ASK_ID);
                     String id = sc.next();
-
-                    System.out.print("Enter Amount: ");
-                    double amount = sc.nextDouble();
-
-                    System.out.println("Balance = " + walletService.withdrawMoney(id, amount));
+                    System.out.print(ASK_AMOUNT);
+                    double amt = sc.nextDouble();
+                    log.info("Balance = {}", walletService.withdrawMoney(id, amt));
                 }
 
                 /* ================= VIEW BALANCE ================= */
                 else if (x == 4) {
-                    System.out.print("Enter User ID: ");
-                    String id = sc.next();
-
-                    System.out.println("Wallet Balance = " + walletService.viewBalance(id));
+                    System.out.print(ASK_ID);
+                    log.info("Wallet Balance = {}", walletService.viewBalance(sc.next()));
                 }
 
                 /* ================= VIEW STOCKS ================= */
                 else if (x == 5) {
                     stockService.getAllStocks().forEach(s ->
-                            System.out.println(s.getTicker() + " @ " + s.getPrice()));
+                            log.info("{} @ {}", s.getTicker(), s.getPrice())
+                    );
                 }
 
                 /* ================= BUY STOCK ================= */
                 else if (x == 6) {
-                    System.out.print("Enter User ID: ");
+                    System.out.print(ASK_ID);
                     String id = sc.next();
-
-                    System.out.print("Enter Stock Ticker: ");
-                    String ticker = sc.next();
-
-                    System.out.print("Enter Quantity: ");
+                    System.out.print(ASK_TICKER);
+                    String tic = sc.next();
+                    System.out.print(ASK_QTY);
                     int qty = sc.nextInt();
 
-                    portfolioService.buyStock(id, ticker, qty);
-                    System.out.println("Stock purchased successfully!");
+                    portfolioService.buyStock(id, tic, qty);
+                    log.info("Stock purchased successfully!");
                 }
 
                 /* ================= SELL STOCK ================= */
                 else if (x == 7) {
-                    System.out.print("Enter User ID: ");
+                    System.out.print(ASK_ID);
                     String id = sc.next();
-
-                    System.out.print("Enter Stock Ticker: ");
-                    String ticker = sc.next();
-
-                    System.out.print("Enter Quantity: ");
+                    System.out.print(ASK_TICKER);
+                    String tic = sc.next();
+                    System.out.print(ASK_QTY);
                     int qty = sc.nextInt();
 
-                    portfolioService.sellStock(id, ticker, qty);
-                    System.out.println("Stock sold successfully!");
+                    portfolioService.sellStock(id, tic, qty);
+                    log.info("Stock sold successfully!");
                 }
 
                 /* ================= VIEW PORTFOLIO ================= */
                 else if (x == 8) {
-                    System.out.print("Enter User ID: ");
+                    System.out.print(ASK_ID);
                     String id = sc.next();
-
-                    System.out.println("\n==========  USER PORTFOLIO REPORT  ==========");
-                    System.out.println(portfolioService.prettyPortfolio(id));
-                    System.out.println("==================================================");
+                    log.info("\n========== USER PORTFOLIO REPORT ==========");
+                    log.info("\n" + portfolioService.prettyPortfolio(id));
+                    log.info("===========================================\n");
                 }
-
 
                 /* ================= EXIT ================= */
                 else if (x == 9) {
-                    System.out.println("Exiting... Goodbye!");
+                    log.info("Exiting... Goodbye!");
                     break;
                 }
 
             } catch (Exception e) {
-                System.out.println("ERROR : " + e.getMessage());
+                log.error("ERROR: {}", e.getMessage());
             }
         }
     }
