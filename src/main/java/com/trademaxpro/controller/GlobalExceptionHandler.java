@@ -26,4 +26,9 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .body("Something went wrong: " + ex.getMessage());
     }
+
+	public ResponseEntity<?> handleInvalidQuantity(InvalidQuantityException invalidQuantityException) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }
